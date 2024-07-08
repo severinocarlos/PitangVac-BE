@@ -45,7 +45,20 @@ namespace PitangVac.Repository.Repositories
 
         public Task<List<SchedulingDTO>> GetByPatientIdOrderedByDateAndTime(int patientId)
         {
-            throw new NotImplementedException();
+            var query = EntitySet.Where(scheduling => scheduling.PatientId == patientId)
+                                 .Select(scheduling => new SchedulingDTO
+                                 {
+                                    Id = scheduling.Id,
+                                    PatientId = scheduling.PatientId,
+                                    SchedulingDate = scheduling.SchedulingDate,
+                                    SchedulingTime = scheduling.SchedulingTime,
+                                    Status = scheduling.Status,
+                                    CreateAt = scheduling.CreateAt
+                                 })
+                                 .OrderBy(scheduling => scheduling.SchedulingDate)
+                                 .ThenBy(scheduling => scheduling.SchedulingTime);
+
+            return query.ToListAsync();
         }
 
         public Task<List<SchedulingDTO>> GetByStatusOrderedByDateAndTime(string status)
