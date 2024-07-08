@@ -1,6 +1,7 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using PitangVac.Api.Configuration;
+using PitangVac.Api.Middleware;
 
 namespace PitangVac.Api
 {
@@ -52,6 +53,8 @@ namespace PitangVac.Api
             });
 
             app.UseRouting();
+
+            app.UseMiddleware<ApiMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
