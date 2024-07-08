@@ -2,6 +2,7 @@
 using PitangVac.Entity.DTO;
 using PitangVac.Entity.Entities;
 using PitangVac.Repository.Interface.IRepositories;
+using System.Xml.XPath;
 using TaskControl.Repository.Repositories;
 
 namespace PitangVac.Repository.Repositories
@@ -24,9 +25,22 @@ namespace PitangVac.Repository.Repositories
             return query.AnyAsync(x => x.Login == login);
         }
 
-        public Task<PatientDTO> FindByName(string name)
+        public Task<List<PatientDTO>> FindByName(string name)
         {
-            throw new NotImplementedException();
+            var query = EntitySet.Where(x => x.Name == name)
+                                 .Select(patient => new PatientDTO
+                                 {
+                                     Id = patient.Id,
+                                     Name = patient.Name,
+                                     Login = patient.Login,
+                                     Email = patient.Email,
+                                     BirthDate = patient.BirthDate,
+                                     CreateAt = patient.CreateAt
+                                 })
+                                 .OrderBy(patient => patient.Name);
+
+
+            return query.ToListAsync();
         }
     }
 }
