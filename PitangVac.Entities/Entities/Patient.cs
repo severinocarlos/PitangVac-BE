@@ -1,8 +1,7 @@
 ﻿namespace PitangVac.Entity.Entities
 {
-    public class Patient
+    public class Patient : EntityId<int>
     {
-        public int Id { get; set; } 
         public string Name { get; set; }
         public string Login { get; set; }
         public string Email { get; set; }
