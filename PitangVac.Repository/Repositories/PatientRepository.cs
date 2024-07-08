@@ -19,7 +19,9 @@ namespace PitangVac.Repository.Repositories
 
         public Task<bool> ExistByLogin(string login)
         {
-            throw new NotImplementedException();
+            var query = EntitySet.AsQueryable();
+
+            return query.AnyAsync(x => x.Login == login);
         }
 
         public Task<PatientDTO> FindByName(string name)
