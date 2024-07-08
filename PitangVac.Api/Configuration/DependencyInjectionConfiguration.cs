@@ -1,6 +1,5 @@
-﻿using PitangVac.Entity.Entities;
-using PitangVac.Repository.Interface.IRepositories;
-using TaskControl.Repository.Repositories;
+﻿using PitangVac.Repository.Interface.IRepositories;
+using PitangVac.Repository.Repositories;
 
 namespace PitangVac.Api.Configuration
 {
@@ -18,6 +17,8 @@ namespace PitangVac.Api.Configuration
 
         private static void InjectRepositories(IServiceCollection services)
         {
+            services.AddScoped<ISchedulingRepository, SchedulingRepository>();
+            services.AddScoped<IPatientRepository, PatientRepository>();
         }
     }
 }
