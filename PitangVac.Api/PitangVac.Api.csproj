@@ -12,11 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\PitangVac.Repository\PitangVac.Repository.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PitangVac.Repository\PitangVac.Repository.csproj" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

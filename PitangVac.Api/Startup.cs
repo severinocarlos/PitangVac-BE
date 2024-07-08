@@ -7,6 +7,7 @@ namespace PitangVac.Api
     public class Startup
     {
         public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -15,6 +16,8 @@ namespace PitangVac.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDependencyInjectionConfiguration();
 
             services.AddDatabaseConfiguration(Configuration);
 
