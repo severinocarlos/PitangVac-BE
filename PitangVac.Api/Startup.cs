@@ -5,10 +5,10 @@ namespace PitangVac.Api
 {
     public class Startup
     {
-        public IConfiguration Configuracao { get; }
-        public Startup(IConfiguration configuracao)
+        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration)
         {
-            Configuracao = configuracao;
+            Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
