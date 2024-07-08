@@ -1,8 +1,7 @@
 ﻿namespace PitangVac.Entity.Entities
 {
-    public class Scheduling
+    public class Scheduling : EntityId<int>
     {
-        public int Id { get; set; }
         public int PatientId { get; set; }
         public DateTime SchedulingDate { get; set; }
         public TimeSpan SchedulingTime { get; set; }
