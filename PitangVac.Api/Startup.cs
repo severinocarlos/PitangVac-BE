@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using PitangVac.Api.Configuration;
 
 namespace PitangVac.Api
 {
@@ -14,6 +15,8 @@ namespace PitangVac.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDatabaseConfiguration(Configuration);
 
             services.AddSwaggerGen(c =>
             {
