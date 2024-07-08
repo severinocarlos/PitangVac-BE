@@ -37,11 +37,11 @@ namespace PitangVac.Repository.Map
                    .HasColumnName("psw_salt")
                    .IsRequired();
 
-            builder.Property(x => x.DataNascimento)
+            builder.Property(x => x.BirthDate)
                    .HasColumnName("dat_nascimento")
                    .IsRequired();
 
-            builder.Property(x => x.DataCriacao)
+            builder.Property(x => x.CreateAt)
                    .HasColumnName("dat_criacao")
                    .IsRequired();
 
