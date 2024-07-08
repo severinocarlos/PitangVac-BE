@@ -37,6 +37,11 @@ namespace PitangVac.Repository.Map
             builder.Property(e => e.CreateAt)
                    .HasColumnName("dat_criacao")
                    .IsRequired();
+
+            builder.HasOne(e => e.Patient)
+                   .WithMany(p => p.Schedulings)
+                   .HasForeignKey(e => e.PatientId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
