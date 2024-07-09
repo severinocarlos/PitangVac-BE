@@ -7,6 +7,8 @@ using PitangVac.Utilities.Reponses;
 using PitangVac.Repository.Interface;
 using Microsoft.AspNetCore.Http.Features;
 using PitangVac.Utilities.Attributes;
+using PitangVac.Utilities.Exceptions;
+using PitangVac.Utilities.Messages;
 
 namespace PitangVac.Api.Middleware
 {
@@ -59,13 +61,28 @@ namespace PitangVac.Api.Middleware
 
             response.ContentType = "application/json";
 
+            // TODO: Criar método para gerenciar StatusCode
             await response.WriteAsync(JsonConvert.SerializeObject(new DefaultResponse(HttpStatusCode.InternalServerError, GetMessages(exception))));
         }
 
         private static List<string> GetMessages(Exception exception)
         {
-            // TODO: Implementar gerenciamento de exceções com suas mensagens respectivas
+
             var messages = new List<string>();
+            switch (exception)
+            {
+                case ExistingResourceException:
+                    messages.Add(exception.Message); 
+                    break;
+                case BusinessExceptionList:
+                    messages = ((BusinessExceptionList)exception).Messages;
+                    break;
+                default:
+                    messages.Add(InfraMessage.UnexpectedError);
+                    break;
+            }
+
+
             return messages;
         }
     }

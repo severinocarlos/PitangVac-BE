@@ -1,4 +1,6 @@
 ﻿using PitangVac.Api.Middleware;
+using PitangVac.Business.Business;
+using PitangVac.Business.Interface.IBusiness;
 using PitangVac.Repository;
 using PitangVac.Repository.Interface;
 using PitangVac.Repository.Interface.IRepositories;
@@ -28,6 +30,7 @@ namespace PitangVac.Api.Configuration
 
         private static void InjectServices(IServiceCollection services)
         {
+            services.AddScoped<IPatientBusiness, PatientBusiness>();
         }
 
         private static void InjectRepositories(IServiceCollection services)
