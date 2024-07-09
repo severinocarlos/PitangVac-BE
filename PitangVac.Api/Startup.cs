@@ -54,7 +54,11 @@ namespace PitangVac.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseMiddleware<ApiMiddleware>();
+            app.UseMiddleware<UserContextMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

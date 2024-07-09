@@ -10,6 +10,8 @@
     <PackageReference Include="log4net" Version="2.0.17" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	<PackageReference Include="tusdotnet" Version="2.8.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
   </ItemGroup>
 
   <ItemGroup>
