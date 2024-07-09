@@ -18,9 +18,11 @@ namespace PitangVac.Api
         {
             services.AddControllers();
 
-            services.AddDependencyInjectionConfiguration();
+            services.AddDependencyInjectionConfiguration(Configuration);
 
             services.AddDatabaseConfiguration(Configuration);
+
+            services.AddAuthorizationConfiguration(Configuration);
 
             services.AddSwaggerGen(c =>
             {
@@ -35,6 +37,15 @@ namespace PitangVac.Api
                     TermsOfService = new Uri("http://google.com.br")
                 });
 
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Insira o token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                c.AddSecurityRequirement(new() { { new() { Reference = new() { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, Array.Empty<string>() } });
             });
         }
 

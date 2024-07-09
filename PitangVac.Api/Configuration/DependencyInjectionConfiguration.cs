@@ -1,18 +1,21 @@
 ﻿using PitangVac.Api.Middleware;
 using PitangVac.Repository.Interface.IRepositories;
 using PitangVac.Repository.Repositories;
+using PitangVac.Utilities.Configurations;
 using PitangVac.Utilities.UserContext;
 
 namespace PitangVac.Api.Configuration
 {
     public static class DependencyInjectionConfiguration
     {
-        public static void AddDependencyInjectionConfiguration(this IServiceCollection services)
+        public static void AddDependencyInjectionConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             InjectRepositories(services);
             InjectServices(services);
             InjectMiddleware(services);
-            InjectAuthorization(services);
+            InjectAuthorization(services, configuration);
+
+            // Todo: implementar controle de transação
         }
 
         private static void InjectMiddleware(IServiceCollection services)
@@ -31,10 +34,10 @@ namespace PitangVac.Api.Configuration
             services.AddScoped<IPatientRepository, PatientRepository>();
         }
 
-        private static void InjectAuthorization(IServiceCollection services)
+        private static void InjectAuthorization(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IUserContext, UserContext>();
-            // TODO: Implementar a configuração para autenticação
+            services.AddOptions<AuthenticationConfig>().Bind(configuration.GetSection("Authorization"));
         }
     }
 }
