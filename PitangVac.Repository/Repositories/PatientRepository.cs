@@ -2,6 +2,7 @@
 using PitangVac.Entity.DTO;
 using PitangVac.Entity.Entities;
 using PitangVac.Repository.Interface.IRepositories;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using TaskControl.Repository.Repositories;
 
@@ -23,6 +24,13 @@ namespace PitangVac.Repository.Repositories
             var query = EntitySet.AsQueryable();
 
             return query.AnyAsync(x => x.Login == login);
+        }
+
+        public Task<Patient?> FindByLogin(string login)
+        {
+            var query = EntitySet.AsQueryable();
+
+            return query.FirstOrDefaultAsync(x => x.Login == login);
         }
 
         public Task<List<PatientDTO>> FindByName(string name)

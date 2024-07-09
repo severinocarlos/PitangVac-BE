@@ -73,5 +73,10 @@ namespace PitangVac.Business.Business
         {
             return await _patientRepository.FindByName(name);
         }
+
+        public async Task<Patient?> FindPatientByLogin(string login)
+        {
+            return await _patientRepository.FindByLogin(login);
+        }
     }
 }
