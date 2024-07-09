@@ -1,4 +1,6 @@
 ﻿using PitangVac.Api.Middleware;
+using PitangVac.Repository;
+using PitangVac.Repository.Interface;
 using PitangVac.Repository.Interface.IRepositories;
 using PitangVac.Repository.Repositories;
 using PitangVac.Utilities.Configurations;
@@ -15,7 +17,7 @@ namespace PitangVac.Api.Configuration
             InjectMiddleware(services);
             InjectAuthorization(services, configuration);
 
-            // Todo: implementar controle de transação
+            services.AddScoped<ITransactionManagement, TransactionManagement>();
         }
 
         private static void InjectMiddleware(IServiceCollection services)
