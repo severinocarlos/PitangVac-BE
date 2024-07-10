@@ -22,6 +22,8 @@ namespace PitangVac.Api
 
             services.AddDatabaseConfiguration(Configuration);
 
+            services.AddFluentConfiguration();
+
             services.AddAuthorizationConfiguration(Configuration);
 
             services.AddSwaggerGen(c =>

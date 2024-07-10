@@ -6,7 +6,7 @@ namespace PitangVac.Business.Interface.IBusiness
 {
     public interface IPatientBusiness
     {
-        Task<PatientDTO> SavePatient(PatientModel patientDTO);
+        Task<PatientDTO> SavePatient(PatientRegisterModel patientDTO);
         Task<Patient?> FindPatientByLogin(string login);
         Task<bool> ExistPatientByLogin(string login);
         Task<bool> ExistPatientByEmail(string email);
