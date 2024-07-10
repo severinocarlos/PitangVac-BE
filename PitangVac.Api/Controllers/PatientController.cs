@@ -39,5 +39,12 @@ namespace PitangVac.Api.Controllers
         {
             return await _patientBusiness.ExistPatientByLogin(login);
         }
+
+        [HttpGet("exist/{email}")]
+        [Authorize]
+        public async Task<bool> ExistPatientByEmail(string email)
+        {
+            return await _patientBusiness.ExistPatientByEmail(email);
+        }
     }
 }
