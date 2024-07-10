@@ -1,6 +1,6 @@
 ﻿namespace PitangVac.Entity.Models
 {
-    public class PatientModel
+    public class PatientRegisterModel
     {
         public string Name { get; set; }
         public string Login { get; set; }

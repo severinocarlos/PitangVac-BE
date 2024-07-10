@@ -20,7 +20,7 @@ namespace PitangVac.Api.Controllers
 
         [HttpPost("register")]
         [Transactional]
-        public async Task<PatientDTO> SavePatient(PatientModel patientModel)
+        public async Task<PatientDTO> SavePatient(PatientRegisterModel patientModel)
         {
             return await _patientBusiness.SavePatient(patientModel);
         }

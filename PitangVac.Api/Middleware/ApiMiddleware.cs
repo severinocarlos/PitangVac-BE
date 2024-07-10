@@ -38,9 +38,12 @@ namespace PitangVac.Api.Middleware
                     await next.Invoke(context);
 
                     await _transactionManagement.CommitTransactionsAsync();
+                } else
+                {
+                    await next.Invoke(context);
                 }
 
-                await next.Invoke(context);
+                
                 stopwatch.Stop();
                 _log.InfoFormat("Serviço executado com sucesso: {0} {1} [{2} ms]", context.Request.Method, context.Request.Path, stopwatch.ElapsedMilliseconds);
             }

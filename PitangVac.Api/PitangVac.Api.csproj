@@ -12,6 +12,7 @@
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	<PackageReference Include="tusdotnet" Version="2.8.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
+	  <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
     <ProjectReference Include="..\PitangVac.Business\PitangVac.Business.csproj" />
     <ProjectReference Include="..\PitangVac.Repository\PitangVac.Repository.csproj" />
     <ProjectReference Include="..\PitangVac.Utilities\PitangVac.Utilities.csproj" />
+    <ProjectReference Include="..\PitangVac.Validators\PitangVac.Validators.csproj" />
   </ItemGroup>
 
 </Project>

@@ -20,7 +20,7 @@ namespace PitangVac.Business.Business
             _patientRepository = patientRepository;
         }
 
-        public async Task<PatientDTO> SavePatient(PatientModel newPatient)
+        public async Task<PatientDTO> SavePatient(PatientRegisterModel newPatient)
         {
             if (await ExistPatientByEmail(newPatient.Email))
             {

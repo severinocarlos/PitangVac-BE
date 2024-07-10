@@ -61,7 +61,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo &quot;{0}&quot; não foi encontrado..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo {0} não foi encontrado..
         /// </summary>
         public static string CampoNaoEncontrado {
             get {
@@ -70,7 +70,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro &quot;{0}&quot; foi removido..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro {0} foi removido..
         /// </summary>
         public static string DeletedValue {
             get {
@@ -79,7 +79,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo &quot;{0}&quot; está inválido..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo {0} está inválido..
         /// </summary>
         public static string InvalidValue {
             get {
@@ -88,7 +88,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo &quot;{0}&quot; deve possuir no máximo {1} caracteres..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo {0} deve possuir no máximo {1} caracteres..
         /// </summary>
         public static string MaxLength {
             get {
@@ -97,7 +97,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo &quot;{0}&quot; deve possuir no mínimo {1} caracteres..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo {0} deve possuir no mínimo {1} caracteres..
         /// </summary>
         public static string MinLength {
             get {
@@ -106,7 +106,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo &quot;{0}&quot; é obrigatório..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O campo {0} é obrigatório..
         /// </summary>
         public static string RequiredValue {
             get {
@@ -115,7 +115,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a A operação &quot;{0}&quot; foi realizada com sucesso..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A operação {0} foi realizada com sucesso..
         /// </summary>
         public static string Success {
             get {
@@ -124,7 +124,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro &quot;{0}&quot; foi atualizado..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro {0} foi atualizado..
         /// </summary>
         public static string UpdatedValue {
             get {
@@ -142,7 +142,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro &quot;{0}&quot; já existe na base..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro {0} já existe na base..
         /// </summary>
         public static string ValueAlreadyExist {
             get {
@@ -151,7 +151,7 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro &quot;{0}&quot; não foi encontrado..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O registro {0} não foi encontrado..
         /// </summary>
         public static string ValueNotFound {
             get {
