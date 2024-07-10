@@ -10,6 +10,8 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using PitangVac.Utilities.Messages;
+using PitangVac.Utilities.Extensions;
 
 
 namespace PitangVac.Business.Business
@@ -32,7 +34,7 @@ namespace PitangVac.Business.Business
 
         public async Task<PatientTokenDTO> Login(LoginModel login)
         {
-            var patient = await _patientBusiness.FindPatientByLogin(login.Login) ?? throw new UnauthorizedAccessException();
+            var patient = await _patientBusiness.FindPatientByLogin(login.Login) ?? throw new UnauthorizedAccessException(BusinessMessages.UserPasswordInvalid);
             
             
             using var hmac = new HMACSHA512(patient.PasswordSalt);
@@ -42,7 +44,7 @@ namespace PitangVac.Business.Business
 
             if (!passwordIsCorrect)
             {
-                throw new UnauthorizedAccessException();
+                throw new UnauthorizedAccessException(BusinessMessages.UserPasswordInvalid);
             }
             
             var token = GenerateToken(patient);
@@ -51,9 +53,15 @@ namespace PitangVac.Business.Business
             return new PatientTokenDTO(token, refreshToken);
         }
 
-        public Task<PatientTokenDTO> RefreshToken()
+        public async Task<PatientTokenDTO> RefreshToken()
         {
-            throw new NotImplementedException();
+            var login = _userContext.Login();
+            var patient = await _patientBusiness.FindPatientByLogin(login) ?? throw new UnauthorizedAccessException(BusinessMessages.UserPasswordInvalid);
+
+            var token = GenerateToken(patient);
+            var refreshToken = GenerateRefreshToken(patient);
+
+            return new PatientTokenDTO(token, refreshToken);
         }
 
         public string GenerateToken(Patient patient)

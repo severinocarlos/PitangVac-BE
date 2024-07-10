@@ -72,6 +72,7 @@ namespace PitangVac.Api.Middleware
             switch (exception)
             {
                 case ExistingResourceException:
+                case UnauthorizedAccessException:
                     messages.Add(exception.Message); 
                     break;
                 case BusinessExceptionList:
