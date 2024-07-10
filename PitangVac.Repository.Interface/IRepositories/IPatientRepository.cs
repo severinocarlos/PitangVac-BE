@@ -8,5 +8,6 @@ namespace PitangVac.Repository.Interface.IRepositories
         Task<bool> ExistByLogin(string login);
         Task<bool> ExistByEmail(string email);
         Task<List<PatientDTO>> FindByName(string name);
+        Task<Patient?> FindByLogin(string login);
     }
 }

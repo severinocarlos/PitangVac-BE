@@ -15,12 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PitangVac.Business.Interface\PitangVac.Business.Interface.csproj" />
+    <ProjectReference Include="..\PitangVac.Business\PitangVac.Business.csproj" />
     <ProjectReference Include="..\PitangVac.Repository\PitangVac.Repository.csproj" />
     <ProjectReference Include="..\PitangVac.Utilities\PitangVac.Utilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
