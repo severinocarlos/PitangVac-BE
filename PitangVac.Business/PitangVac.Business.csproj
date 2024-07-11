@@ -16,6 +16,7 @@
     <ProjectReference Include="..\PitangVac.Business.Interface\PitangVac.Business.Interface.csproj" />
     <ProjectReference Include="..\PitangVac.Repository.Interface\PitangVac.Repository.Interface.csproj" />
     <ProjectReference Include="..\PitangVac.Utilities\PitangVac.Utilities.csproj" />
+    <ProjectReference Include="..\PitangVac.Validators\PitangVac.Validators.csproj" />
   </ItemGroup>
 
 </Project>

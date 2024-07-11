@@ -31,6 +31,7 @@ namespace PitangVac.Api.Configuration
         {
             services.AddScoped<IPatientBusiness, PatientBusiness>();
             services.AddScoped<IAuthenticationBusiness, AuthenticationBusiness>();
+            services.AddScoped<ISchedulingBusiness, SchedulingBusiness>();
         }
 
         private static void InjectRepositories(IServiceCollection services)

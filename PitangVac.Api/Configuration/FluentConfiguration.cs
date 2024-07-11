@@ -13,6 +13,7 @@ namespace PitangVac.Api.Configuration
 
             services.AddValidatorsFromAssemblyContaining<PatientRegisterValidator>();
             services.AddValidatorsFromAssemblyContaining<PatientLoginValidator>();
+            services.AddValidatorsFromAssemblyContaining<SchedulingRegisterValidator>();
         }
     }
 }
