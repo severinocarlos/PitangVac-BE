@@ -58,6 +58,12 @@ namespace PitangVac.Api.Controllers
             return await _schedulingBusiness.SchedulingCompleted(schedulingId);
         }
 
-
+        [HttpPost("status/cancel/{schedulingId}")]
+        [Transactional]
+        [Authorize]
+        public async Task<List<SchedulingDTO>> CancelScheduling(int schedulingId)
+        {
+            return await _schedulingBusiness.SchedulingCanceled(schedulingId);
+        }
     }
 }
