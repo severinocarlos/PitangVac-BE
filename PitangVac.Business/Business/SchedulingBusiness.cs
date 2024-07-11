@@ -108,7 +108,6 @@ namespace PitangVac.Business.Business
                 SchedulingTime = scheduling.SchedulingTime,
                 Status = StatusEnum.Agendado,
                 CreateAt = DateTime.Now,
-                Patient = patient,
             };
 
 

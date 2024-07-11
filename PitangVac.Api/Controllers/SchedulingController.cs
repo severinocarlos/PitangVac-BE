@@ -28,6 +28,14 @@ namespace PitangVac.Api.Controllers
             return await _schedulingBusiness.GetAllSchedulingOrderedByDateAndTime();
         }
 
-        
+        [HttpPost]
+        [Transactional]
+        [Authorize]
+        public async Task<SchedulingDTO> SaveScheduling(SchedulingRegisterModel scheduling)
+        {
+            return await _schedulingBusiness.SchedulingRegister(scheduling);
+        }
+
+
     }
 }
