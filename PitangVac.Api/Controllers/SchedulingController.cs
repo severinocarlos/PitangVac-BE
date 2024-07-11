@@ -50,6 +50,14 @@ namespace PitangVac.Api.Controllers
             return await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status);
         }
 
+        [HttpPost("status/complete/{schedulingId}")]
+        [Transactional]
+        [Authorize]
+        public async Task<List<SchedulingDTO>> CompleteScheduling(int schedulingId)
+        {
+            return await _schedulingBusiness.SchedulingCompleted(schedulingId);
+        }
+
 
     }
 }
