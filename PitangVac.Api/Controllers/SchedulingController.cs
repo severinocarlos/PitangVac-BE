@@ -36,11 +36,18 @@ namespace PitangVac.Api.Controllers
             return await _schedulingBusiness.SchedulingRegister(scheduling);
         }
 
-        [HttpGet("/{patientId}")]
+        [HttpGet("{patientId}")]
         [Authorize]
         public async Task<List<SchedulingDTO>> AllByPatientId(int patientId)
         {
             return await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientId);
+        }
+
+        [HttpGet("status/{status}")]
+        [Authorize]
+        public async Task<List<SchedulingDTO>> AllByStatus(string status)
+        {
+            return await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status);
         }
 
 
