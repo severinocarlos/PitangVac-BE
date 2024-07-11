@@ -10,33 +10,39 @@ namespace PitangVac.Repository.Repositories
     {
         public SchedulingRepository(DatabaseContext dbContext) : base(dbContext) { }
 
-        public Task<SchedulingDTO?> FindByPatientId(int patientId)
+        public Task<int> CheckSchedulingAvaliableByDate(DateTime date)
         {
-            var query = EntitySet.AsQueryable()
-                                 .Select(scheduling => new SchedulingDTO
-                                 {
-                                     Id = scheduling.Id,
-                                     PatientId = scheduling.PatientId,
-                                     SchedulingDate = scheduling.SchedulingDate,
-                                     SchedulingTime = scheduling.SchedulingTime,
-                                     Status = scheduling.Status,
-                                     CreateAt = scheduling.CreateAt
-                                 });
+            var query = EntitySet.AsQueryable();
 
-            return query.FirstOrDefaultAsync(x => x.PatientId == patientId);
+            return query.CountAsync(scheduling => scheduling.SchedulingDate.Equals(date));
+        }
+
+        public Task<int> CheckSchedulingAvaliableByTime(TimeSpan hour)
+        {
+            var query = EntitySet.AsQueryable();
+
+            return query.CountAsync(scheduling => scheduling.SchedulingTime.Equals(hour));
         }
 
         public Task<List<SchedulingDTO>> GetAllOrderedByDateAndTime()
         {
             var query = EntitySet.Select(scheduling => new SchedulingDTO
-            {
-                Id = scheduling.Id,
-                PatientId = scheduling.PatientId,
-                SchedulingDate = scheduling.SchedulingDate,
-                SchedulingTime = scheduling.SchedulingTime,
-                Status = scheduling.Status,
-                CreateAt = scheduling.CreateAt
-            })
+                                {
+                                    Id = scheduling.Id,
+                                    Patient = new PatientDTO
+                                    {
+                                        Id = scheduling.Patient.Id,
+                                        Name = scheduling.Patient.Name,
+                                        Login = scheduling.Patient.Login,
+                                        Email = scheduling.Patient.Email,
+                                        BirthDate = scheduling.Patient.BirthDate,
+                                        CreateAt = scheduling.Patient.CreateAt,
+                                    },
+                                    SchedulingDate = scheduling.SchedulingDate,
+                                    SchedulingTime = scheduling.SchedulingTime,
+                                    Status = scheduling.Status,
+                                    CreateAt = scheduling.CreateAt
+                                })
                                 .OrderBy(scheduling => scheduling.SchedulingDate)
                                 .ThenBy(scheduling => scheduling.SchedulingTime);
 
@@ -49,7 +55,15 @@ namespace PitangVac.Repository.Repositories
                                  .Select(scheduling => new SchedulingDTO
                                  {
                                      Id = scheduling.Id,
-                                     PatientId = scheduling.PatientId,
+                                     Patient = new PatientDTO
+                                     {
+                                         Id = scheduling.Patient.Id,
+                                         Name = scheduling.Patient.Name,
+                                         Login = scheduling.Patient.Login,
+                                         Email = scheduling.Patient.Email,
+                                         BirthDate = scheduling.Patient.BirthDate,
+                                         CreateAt = scheduling.Patient.CreateAt,
+                                     },
                                      SchedulingDate = scheduling.SchedulingDate,
                                      SchedulingTime = scheduling.SchedulingTime,
                                      Status = scheduling.Status,
@@ -63,18 +77,27 @@ namespace PitangVac.Repository.Repositories
 
         public Task<List<SchedulingDTO>> GetByStatusOrderedByDateAndTime(string status)
         {
-            var query = EntitySet.Where(scheduling => scheduling.Status == status)
-                                  .Select(scheduling => new SchedulingDTO
-                                  {
+            var query = EntitySet.Include(e => e.Patient)
+                                 .Where(scheduling => scheduling.Status == status)
+                                 .Select(scheduling => new SchedulingDTO
+                                 {
                                       Id = scheduling.Id,
-                                      PatientId = scheduling.PatientId,
+                                      Patient = new PatientDTO
+                                      {
+                                          Id = scheduling.Patient.Id,
+                                          Name = scheduling.Patient.Name,
+                                          Login = scheduling.Patient.Login,
+                                          Email = scheduling.Patient.Email,
+                                          BirthDate = scheduling.Patient.BirthDate,
+                                          CreateAt = scheduling.Patient.CreateAt,
+                                      },
                                       SchedulingDate = scheduling.SchedulingDate,
                                       SchedulingTime = scheduling.SchedulingTime,
                                       Status = scheduling.Status,
                                       CreateAt = scheduling.CreateAt
-                                  })
-                                  .OrderBy(scheduling => scheduling.SchedulingDate)
-                                  .ThenBy(scheduling => scheduling.SchedulingTime);
+                                 })
+                                 .OrderBy(scheduling => scheduling.SchedulingDate)
+                                 .ThenBy(scheduling => scheduling.SchedulingTime);
 
             return query.ToListAsync();
         }

@@ -7,8 +7,8 @@ namespace PitangVac.Business.Interface.IBusiness
     {
         Task<SchedulingDTO> SchedulingRegister(SchedulingRegisterModel scheduling);
         Task<SchedulingDTO> HoursAvailable();
-        Task<SchedulingDTO> SchedulingCompleted(int schedulingId);
-        Task<SchedulingDTO> SchedulingCanceled(int schedulingId);
+        Task<List<SchedulingDTO>> SchedulingCompleted(int schedulingId);
+        Task<List<SchedulingDTO>> SchedulingCanceled(int schedulingId);
         Task<List<SchedulingDTO>> GetAllSchedulingOrderedByDateAndTime();
         Task<List<SchedulingDTO>> GetSchedulingsByPatientIdOrderedByDateAndTime(int patientId);
         Task<List<SchedulingDTO>> GetSchedulingsByStatusOrderedByDateAndTime(string status);

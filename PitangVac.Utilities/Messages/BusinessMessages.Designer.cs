@@ -88,6 +88,15 @@ namespace PitangVac.Utilities.Messages {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Quantidade máxima de agendamento atingida para {0}: {1}..
+        /// </summary>
+        public static string MaximumSchedulingQuantity {
+            get {
+                return ResourceManager.GetString("MaximumSchedulingQuantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a O campo {0} deve possuir no máximo {1} caracteres..
         /// </summary>
         public static string MaxLength {
