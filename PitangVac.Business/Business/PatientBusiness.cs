@@ -22,14 +22,14 @@ namespace PitangVac.Business.Business
 
         public async Task<PatientDTO> SavePatient(PatientRegisterModel newPatient)
         {
-            if (await ExistPatientByEmail(newPatient.Email))
-            {
-                throw new ExistingResourceException(string.Format(BusinessMessages.ValueAlreadyExist, newPatient.Email));
-            }
-
             if (await ExistPatientByLogin(newPatient.Login))
             {
                 throw new ExistingResourceException(string.Format(BusinessMessages.ValueAlreadyExist, newPatient.Login));
+            }
+
+            if (await ExistPatientByEmail(newPatient.Email))
+            {
+                throw new ExistingResourceException(string.Format(BusinessMessages.ValueAlreadyExist, newPatient.Email));
             }
 
             using var hmac = new HMACSHA512();
@@ -61,21 +61,41 @@ namespace PitangVac.Business.Business
 
         public async Task<bool> ExistPatientByEmail(string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new InvalidDataException(string.Format(BusinessMessages.InvalidValue, email));
+            }
+
             return await _patientRepository.ExistByEmail(email);
         }
 
         public async Task<bool> ExistPatientByLogin(string login)
         {
+            if (string.IsNullOrEmpty(login))
+            {
+                throw new InvalidDataException(string.Format(BusinessMessages.InvalidValue, login));
+            }
+
             return await _patientRepository.ExistByLogin(login);
         }
 
         public async Task<List<PatientDTO>> FindPatientByName(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new InvalidDataException(string.Format(BusinessMessages.InvalidValue, name));
+            }
+
             return await _patientRepository.FindByName(name);
         }
 
         public async Task<Patient?> FindPatientByLogin(string login)
         {
+            if (string.IsNullOrEmpty(login))
+            {
+                throw new InvalidDataException(string.Format(BusinessMessages.InvalidValue, login));
+            }
+
             return await _patientRepository.FindByLogin(login);
         }
     }
