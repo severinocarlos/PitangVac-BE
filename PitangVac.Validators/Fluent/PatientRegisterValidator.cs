@@ -27,8 +27,7 @@ namespace PitangVac.Validators.Fluent
               .NotEmpty().WithMessage(string.Format(BusinessMessages.RequiredValue, "Senha"));
 
             RuleFor(t => t.BirthDate)
-              .NotNull().WithMessage(string.Format(BusinessMessages.RequiredValue, "Data de Nascimento"))
-              .NotEmpty().WithMessage(string.Format(BusinessMessages.RequiredValue, "Data de Nascimento"));
+                .Must(date => date != default).WithMessage(string.Format(BusinessMessages.InvalidValue, "Data de Nascimento"));
         }
     }
 }
