@@ -65,7 +65,34 @@ namespace PitangVac.Api.Middleware
             response.ContentType = "application/json";
 
             // TODO: Criar método para gerenciar StatusCode
-            await response.WriteAsync(JsonConvert.SerializeObject(new DefaultResponse(HttpStatusCode.InternalServerError, GetMessages(exception))));
+            await response.WriteAsync(JsonConvert.SerializeObject(new DefaultResponse(GetStatusCode(exception), GetMessages(exception))));
+        }
+
+        private static HttpStatusCode GetStatusCode(Exception exception)
+        {
+            HttpStatusCode httpStatusCode;
+
+            switch (exception)
+            {
+                case ExistingResourceException:
+                case BusinessException:
+                    httpStatusCode = HttpStatusCode.Conflict; 
+                    break;
+                case UnauthorizedAccessException:
+                    httpStatusCode = HttpStatusCode.Unauthorized;
+                    break;
+                case InvalidDataException:
+                    httpStatusCode = HttpStatusCode.BadRequest;
+                    break;
+                case RegisterNotFound:
+                    httpStatusCode = HttpStatusCode.NotFound;
+                    break;
+                default:
+                    httpStatusCode = HttpStatusCode.InternalServerError;
+                    break;
+            }
+
+            return httpStatusCode;
         }
 
         private static List<string> GetMessages(Exception exception)
