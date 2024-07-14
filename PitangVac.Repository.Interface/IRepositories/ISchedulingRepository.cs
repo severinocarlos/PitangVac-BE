@@ -10,5 +10,6 @@ namespace PitangVac.Repository.Interface.IRepositories
         Task<List<SchedulingDTO>> GetByStatusOrderedByDateAndTime(string status);
         Task<int> CheckSchedulingAvaliableByDate(DateTime date);
         Task<int> CheckSchedulingAvaliableByTime(TimeSpan hour);
+        Task<List<TimeSpan>> FilledSchedules(DateTime date);
     }
 }

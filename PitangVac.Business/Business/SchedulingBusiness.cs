@@ -12,6 +12,19 @@ namespace PitangVac.Business.Business
 {
     public class SchedulingBusiness : ISchedulingBusiness
     {
+        private static List<string> HoursAvailableList = new()
+        {
+            "08:00:00",
+            "09:00:00",
+            "10:00:00",
+            "11:00:00",
+            "12:00:00",
+            "13:00:00",
+            "14:00:00",
+            "15:00:00",
+            "16:00:00",
+            "17:00:00"
+        };
 
         private readonly ISchedulingRepository _schedulingRepository;
         private readonly IPatientRepository _patientRepository;
@@ -47,9 +60,16 @@ namespace PitangVac.Business.Business
             return await _schedulingRepository.GetByStatusOrderedByDateAndTime(status);
         }
 
-        public Task<SchedulingDTO> HoursAvailable()
+        public async Task<List<string>> HoursAvailable(DateTime date)
         {
-            throw new NotImplementedException();
+            // TODO: Validar data recebida
+
+            var hours = await _schedulingRepository.FilledSchedules(date);
+
+            // TODO: Melhorar a abordagem de selecionar as horas disponíveis
+            var filteredTimeStrings = hours.Select(t => t.ToString(@"hh\:mm\:ss")).ToList();
+
+           return HoursAvailableList.Where(e => !filteredTimeStrings.Contains(e)).ToList();
         }
 
         public async Task<List<SchedulingDTO>> SchedulingCanceled(int schedulingId)

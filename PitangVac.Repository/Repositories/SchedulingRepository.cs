@@ -8,6 +8,8 @@ namespace PitangVac.Repository.Repositories
 {
     public class SchedulingRepository : BaseRepository<Scheduling>, ISchedulingRepository
     {
+        
+
         public SchedulingRepository(DatabaseContext dbContext) : base(dbContext) { }
 
         public Task<int> CheckSchedulingAvaliableByDate(DateTime date)
@@ -98,6 +100,16 @@ namespace PitangVac.Repository.Repositories
                                  })
                                  .OrderBy(scheduling => scheduling.SchedulingDate)
                                  .ThenBy(scheduling => scheduling.SchedulingTime);
+
+            return query.ToListAsync();
+        }
+
+        public Task<List<TimeSpan>> FilledSchedules(DateTime date)
+        {
+            var query = EntitySet.Where(e => e.SchedulingDate.Equals(date))
+                                        .GroupBy(e => e.SchedulingTime)
+                                        .Where(g => g.Count() == 2)
+                                        .Select(g => g.Key);
 
             return query.ToListAsync();
         }

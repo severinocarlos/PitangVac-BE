@@ -65,5 +65,12 @@ namespace PitangVac.Api.Controllers
         {
             return await _schedulingBusiness.SchedulingCanceled(schedulingId);
         }
+
+        [HttpGet("hours-avaliable/{date}")]
+        [Authorize]
+        public async Task<List<string>> GetHoursAvaliable(DateTime date)
+        {
+            return await _schedulingBusiness.HoursAvailable(date);
+        }
     }
 }
