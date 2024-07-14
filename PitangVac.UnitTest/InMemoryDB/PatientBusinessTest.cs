@@ -38,8 +38,8 @@ namespace PitangVac.UnitTest.InMemoryDB
             var patient = new PatientRegisterModel 
             { 
                 Name = "Teste",
-                Login = "Teste",
-                Email = "Test@teste.com",
+                Login = "Teste7",
+                Email = "Test7@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -62,8 +62,8 @@ namespace PitangVac.UnitTest.InMemoryDB
             var patient = new PatientRegisterModel
             {
                 Name = "Teste",
-                Login = "Teste",
-                Email = "Test@teste.com",
+                Login = "Teste4",
+                Email = "Test4@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -80,8 +80,8 @@ namespace PitangVac.UnitTest.InMemoryDB
             var newPatient = new PatientRegisterModel
             {
                 Name = "Teste",
-                Login = "Teste",
-                Email = "Test1@teste.com",
+                Login = "Teste4",
+                Email = "Test5@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
