@@ -65,6 +65,7 @@ namespace PitangVac.Api
                 c.RoutePrefix = string.Empty;
             });
 
+            app.UseCors("CORS_POLICY");
             app.UseRouting();
 
             app.UseAuthentication();
