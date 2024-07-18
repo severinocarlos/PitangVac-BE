@@ -103,6 +103,8 @@ namespace PitangVac.Api.Middleware
             {
                 case ExistingResourceException:
                 case UnauthorizedAccessException:
+                case BusinessException:
+                case RegisterNotFound:
                     messages.Add(exception.Message); 
                     break;
                 case BusinessExceptionList:
