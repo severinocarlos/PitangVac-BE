@@ -5,7 +5,9 @@ using PitangVac.Entity.Enums;
 using PitangVac.Entity.Models;
 using PitangVac.Repository.Interface.IRepositories;
 using PitangVac.Utilities.Exceptions;
+using PitangVac.Utilities.Extensions;
 using PitangVac.Utilities.Messages;
+using PitangVac.Utilities.UserContext;
 using PitangVac.Validators.Manual;
 
 namespace PitangVac.Business.Business
@@ -28,11 +30,15 @@ namespace PitangVac.Business.Business
 
         private readonly ISchedulingRepository _schedulingRepository;
         private readonly IPatientRepository _patientRepository;
+        private readonly IUserContext _userContext;
 
-        public SchedulingBusiness(ISchedulingRepository schedulingRepository, IPatientRepository patientRepository) 
+        public SchedulingBusiness(ISchedulingRepository schedulingRepository, 
+                                  IPatientRepository patientRepository,
+                                  IUserContext userContext) 
         {
             _schedulingRepository = schedulingRepository;
             _patientRepository = patientRepository;
+            _userContext = userContext;
         }
 
         public async Task<List<SchedulingDTO>> GetAllSchedulingOrderedByDateAndTime()
@@ -102,8 +108,9 @@ namespace PitangVac.Business.Business
 
         public async Task<SchedulingDTO> SchedulingRegister(SchedulingRegisterModel scheduling)
         {
-            var patient = await _patientRepository.GetById(scheduling.PatientId) ?? 
-                                throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, scheduling.PatientId));
+            var login = _userContext.Login();
+
+            var patient = await _patientRepository.FindByLogin(login);
 
             var maximumSchedulingAmountPerDay = 20;
             var schedulingAmountPerDay = await _schedulingRepository.CheckSchedulingAvaliableByDate(scheduling.SchedulingDate);
@@ -114,7 +121,7 @@ namespace PitangVac.Business.Business
             }
 
             var maximumSchedulingAmountPerTime = 2;
-            var schedulingAmountPerTime = await _schedulingRepository.CheckSchedulingAvaliableByTime(scheduling.SchedulingTime);
+            var schedulingAmountPerTime = await _schedulingRepository.CheckSchedulingAvaliableByTime(scheduling.SchedulingDate, scheduling.SchedulingTime);
 
             if (schedulingAmountPerTime == maximumSchedulingAmountPerTime)
             {
@@ -123,7 +130,7 @@ namespace PitangVac.Business.Business
 
             var newScheduling = new Scheduling
             {
-                PatientId = scheduling.PatientId,
+                PatientId = patient!.Id,
                 SchedulingDate = scheduling.SchedulingDate,
                 SchedulingTime = scheduling.SchedulingTime,
                 Status = StatusEnum.Agendado,
