@@ -9,7 +9,7 @@ namespace PitangVac.Repository.Interface.IRepositories
         Task<List<SchedulingDTO>> GetByPatientIdOrderedByDateAndTime(int patientId);
         Task<List<SchedulingDTO>> GetByStatusOrderedByDateAndTime(string status);
         Task<int> CheckSchedulingAvaliableByDate(DateTime date);
-        Task<int> CheckSchedulingAvaliableByTime(TimeSpan hour);
+        Task<int> CheckSchedulingAvaliableByTime(DateTime date, TimeSpan hour);
         Task<List<TimeSpan>> FilledSchedules(DateTime date);
     }
 }

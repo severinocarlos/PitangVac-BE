@@ -19,11 +19,12 @@ namespace PitangVac.Repository.Repositories
             return query.CountAsync(scheduling => scheduling.SchedulingDate.Equals(date));
         }
 
-        public Task<int> CheckSchedulingAvaliableByTime(TimeSpan hour)
+        public Task<int> CheckSchedulingAvaliableByTime(DateTime date, TimeSpan hour)
         {
             var query = EntitySet.AsQueryable();
 
-            return query.CountAsync(scheduling => scheduling.SchedulingTime.Equals(hour));
+            return query.Where(e => e.SchedulingDate.Equals(date))
+                        .CountAsync(scheduling => scheduling.SchedulingTime.Equals(hour));
         }
 
         public Task<List<SchedulingDTO>> GetAllOrderedByDateAndTime()
