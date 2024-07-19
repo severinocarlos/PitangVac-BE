@@ -73,11 +73,9 @@ namespace PitangVac.Api.Middleware
             if (securityToken != null && securityToken.Claims.Any())
             {
                 var userName = securityToken.Claims.GetClaimValue(ClaimTypes.Name);
-                var roles = securityToken.Claims.GetValuesOfType(ClaimTypes.Role);
                 var login = securityToken.Claims.GetClaimValue("login");
 
                 _userContext.AddData("userName", userName);
-                _userContext.AddData("roles", roles);
                 _userContext.AddData("login", login);
             }
         }

@@ -73,6 +73,7 @@ namespace PitangVac.Business.Business
                 new(ClaimTypes.Sid, patient.Id.ToString()),
                 new(ClaimTypes.Name, patient.Name),
                 new("login", patient.Login),
+                new("id", patient.Id.ToString()),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
