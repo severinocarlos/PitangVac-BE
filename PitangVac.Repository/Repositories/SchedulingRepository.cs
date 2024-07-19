@@ -66,7 +66,7 @@ namespace PitangVac.Repository.Repositories
 
         public async Task<SchedulingPaginationDTO> GetByPatientIdOrderedByDateAndTime(int patientId, int pageNumber, int pageSize)
         {
-            var totalCount = await EntitySet.CountAsync();
+            var totalCount = await EntitySet.CountAsync(e => e.PatientId.Equals(patientId));
 
             var schedulings = await EntitySet.Where(scheduling => scheduling.PatientId == patientId)
                                  .Select(scheduling => new SchedulingDTO
@@ -102,7 +102,7 @@ namespace PitangVac.Repository.Repositories
         public async Task<SchedulingPaginationDTO> GetByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize)
         {
 
-            var totalCount = await EntitySet.CountAsync();
+            var totalCount = await EntitySet.CountAsync(e => e.Status.Equals(status));
 
             var schedulings = await EntitySet.Include(e => e.Patient)
                                  .Where(scheduling => scheduling.Status == status)
@@ -138,7 +138,7 @@ namespace PitangVac.Repository.Repositories
 
         public Task<List<TimeSpan>> FilledSchedules(DateTime date)
         {
-            var query = EntitySet.Where(e => e.SchedulingDate == date && e.Status != StatusEnum.Cancelado)
+            var query = EntitySet.Where(e => e.SchedulingDate.Date == date.Date && e.Status != StatusEnum.Cancelado)
                                 .GroupBy(e => e.SchedulingTime)
                                 .Where(g => g.Count() == 2)
                                 .Select(g => g.Key);
