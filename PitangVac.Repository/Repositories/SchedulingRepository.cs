@@ -27,9 +27,13 @@ namespace PitangVac.Repository.Repositories
                         .CountAsync(scheduling => scheduling.SchedulingTime.Equals(hour));
         }
 
-        public Task<List<SchedulingDTO>> GetAllOrderedByDateAndTime()
+        public async Task<SchedulingPaginationDTO> GetAllOrderedByDateAndTime(int pageNumber, int pageSize)
         {
-            var query = EntitySet.Select(scheduling => new SchedulingDTO
+            // TODO: Verificar se é a melhor forma de fazer a paginação
+
+            var totalCount = await EntitySet.CountAsync();
+
+            var schedulings = await EntitySet.Select(scheduling => new SchedulingDTO
                                 {
                                     Id = scheduling.Id,
                                     Patient = new PatientDTO
@@ -46,15 +50,24 @@ namespace PitangVac.Repository.Repositories
                                     Status = scheduling.Status,
                                     CreateAt = scheduling.CreateAt
                                 })
+                                .Skip(pageNumber * pageSize)
+                                .Take(pageSize)
                                 .OrderBy(scheduling => scheduling.SchedulingDate)
-                                .ThenBy(scheduling => scheduling.SchedulingTime);
+                                .ThenBy(scheduling => scheduling.SchedulingTime)
+                                .ToListAsync();
 
-            return query.ToListAsync();
+            return new SchedulingPaginationDTO
+            {
+                Schedulings = schedulings,
+                TotalLength = totalCount
+            };
         }
 
-        public Task<List<SchedulingDTO>> GetByPatientIdOrderedByDateAndTime(int patientId)
+        public async Task<SchedulingPaginationDTO> GetByPatientIdOrderedByDateAndTime(int patientId, int pageNumber, int pageSize)
         {
-            var query = EntitySet.Where(scheduling => scheduling.PatientId == patientId)
+            var totalCount = await EntitySet.CountAsync();
+
+            var schedulings = await EntitySet.Where(scheduling => scheduling.PatientId == patientId)
                                  .Select(scheduling => new SchedulingDTO
                                  {
                                      Id = scheduling.Id,
@@ -72,15 +85,25 @@ namespace PitangVac.Repository.Repositories
                                      Status = scheduling.Status,
                                      CreateAt = scheduling.CreateAt
                                  })
+                                 .Skip(pageNumber * pageSize)
+                                 .Take(pageSize)
                                  .OrderBy(scheduling => scheduling.SchedulingDate)
-                                 .ThenBy(scheduling => scheduling.SchedulingTime);
+                                 .ThenBy(scheduling => scheduling.SchedulingTime)
+                                 .ToListAsync();
 
-            return query.ToListAsync();
+            return new SchedulingPaginationDTO
+            {
+                Schedulings = schedulings,
+                TotalLength = totalCount
+            };
         }
 
-        public Task<List<SchedulingDTO>> GetByStatusOrderedByDateAndTime(string status)
+        public async Task<SchedulingPaginationDTO> GetByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize)
         {
-            var query = EntitySet.Include(e => e.Patient)
+
+            var totalCount = await EntitySet.CountAsync();
+
+            var schedulings = await EntitySet.Include(e => e.Patient)
                                  .Where(scheduling => scheduling.Status == status)
                                  .Select(scheduling => new SchedulingDTO
                                  {
@@ -99,10 +122,17 @@ namespace PitangVac.Repository.Repositories
                                       Status = scheduling.Status,
                                       CreateAt = scheduling.CreateAt
                                  })
+                                 .Skip(pageNumber * pageSize)
+                                 .Take(pageSize)
                                  .OrderBy(scheduling => scheduling.SchedulingDate)
-                                 .ThenBy(scheduling => scheduling.SchedulingTime);
+                                 .ThenBy(scheduling => scheduling.SchedulingTime)
+                                 .ToListAsync();
 
-            return query.ToListAsync();
+            return new SchedulingPaginationDTO
+            {
+                Schedulings = schedulings,
+                TotalLength = totalCount
+            };
         }
 
         public Task<List<TimeSpan>> FilledSchedules(DateTime date)

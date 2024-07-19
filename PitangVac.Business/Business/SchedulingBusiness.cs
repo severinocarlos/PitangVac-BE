@@ -41,29 +41,30 @@ namespace PitangVac.Business.Business
             _userContext = userContext;
         }
 
-        public async Task<List<SchedulingDTO>> GetAllSchedulingOrderedByDateAndTime()
+        public async Task<SchedulingPaginationDTO> GetAllSchedulingOrderedByDateAndTime(int pageNumber, int pageSize)
         {
-            return await _schedulingRepository.GetAllOrderedByDateAndTime();
+            return await _schedulingRepository.GetAllOrderedByDateAndTime(pageNumber, pageSize);
         }
 
-        public async Task<List<SchedulingDTO>> GetSchedulingsByPatientIdOrderedByDateAndTime(int patientId)
+        public async Task<SchedulingPaginationDTO> GetSchedulingsByPatientIdOrderedByDateAndTime(int pageNumber, int pageSize)
         {
+            var login = _userContext.Login();
             // TODO: Refatorar para método que retorna apenas booleano verificando se existe por id
-            var _ = await _patientRepository.GetById(patientId) ?? 
-                            throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, patientId));
+            var patient = await _patientRepository.FindByLogin(login) ?? 
+                            throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, login));
 
 
-            return await _schedulingRepository.GetByPatientIdOrderedByDateAndTime(patientId);
+            return await _schedulingRepository.GetByPatientIdOrderedByDateAndTime(patient.Id, pageNumber, pageSize);
         }
 
-        public async Task<List<SchedulingDTO>> GetSchedulingsByStatusOrderedByDateAndTime(string status)
+        public async Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize)
         {
             if (!StatusValidator.IsValidStatus(status))
             {
                 throw new InvalidDataException(string.Format(BusinessMessages.InvalidValue, status));
             }
 
-            return await _schedulingRepository.GetByStatusOrderedByDateAndTime(status);
+            return await _schedulingRepository.GetByStatusOrderedByDateAndTime(status, pageNumber, pageSize);
         }
 
         public async Task<List<string>> HoursAvailable(DateTime date)
@@ -78,7 +79,7 @@ namespace PitangVac.Business.Business
            return HoursAvailableList.Where(e => !filteredTimeStrings.Contains(e)).ToList();
         }
 
-        public async Task<List<SchedulingDTO>> SchedulingCanceled(int schedulingId)
+        public async Task<SchedulingDTO> SchedulingCanceled(int schedulingId)
         {
             var scheduling = await _schedulingRepository.GetById(schedulingId) ?? throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, schedulingId));
 
@@ -89,10 +90,26 @@ namespace PitangVac.Business.Business
 
             scheduling.Status = StatusEnum.Cancelado;
 
-            return await _schedulingRepository.GetAllOrderedByDateAndTime();
+            return new SchedulingDTO
+            {
+                Id = scheduling.Id,
+                SchedulingDate = scheduling.SchedulingDate,
+                SchedulingTime = scheduling.SchedulingTime,
+                Status = scheduling.Status,
+                CreateAt = scheduling.CreateAt,
+                Patient = new PatientDTO
+                {
+                    Id = scheduling.Patient.Id,
+                    Name = scheduling.Patient.Name,
+                    Login = scheduling.Patient.Login,
+                    Email = scheduling.Patient.Email,
+                    BirthDate = scheduling.Patient.BirthDate,
+                    CreateAt = scheduling.Patient.CreateAt,
+                },
+            };
         }
 
-        public async Task<List<SchedulingDTO>> SchedulingCompleted(int schedulingId)
+        public async Task<SchedulingDTO> SchedulingCompleted(int schedulingId)
         {
             var scheduling = await _schedulingRepository.GetById(schedulingId) ?? throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, schedulingId));
 
@@ -103,7 +120,23 @@ namespace PitangVac.Business.Business
 
             scheduling.Status = StatusEnum.Concluído;
 
-            return await _schedulingRepository.GetAllOrderedByDateAndTime();
+            return new SchedulingDTO
+            {
+                Id = scheduling.Id,
+                SchedulingDate = scheduling.SchedulingDate,
+                SchedulingTime = scheduling.SchedulingTime,
+                Status = scheduling.Status,
+                CreateAt = scheduling.CreateAt,
+                Patient = new PatientDTO
+                {
+                    Id = scheduling.Patient.Id,
+                    Name = scheduling.Patient.Name,
+                    Login = scheduling.Patient.Login,
+                    Email = scheduling.Patient.Email,
+                    BirthDate = scheduling.Patient.BirthDate,
+                    CreateAt = scheduling.Patient.CreateAt,
+                },
+            };
         }
 
         public async Task<SchedulingDTO> SchedulingRegister(SchedulingRegisterModel scheduling)
