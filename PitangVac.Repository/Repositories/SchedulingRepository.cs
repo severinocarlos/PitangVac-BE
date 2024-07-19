@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PitangVac.Entity.DTO;
 using PitangVac.Entity.Entities;
+using PitangVac.Entity.Enums;
 using PitangVac.Repository.Interface.IRepositories;
 using TaskControl.Repository.Repositories;
 
@@ -137,10 +138,10 @@ namespace PitangVac.Repository.Repositories
 
         public Task<List<TimeSpan>> FilledSchedules(DateTime date)
         {
-            var query = EntitySet.Where(e => e.SchedulingDate.Equals(date))
-                                        .GroupBy(e => e.SchedulingTime)
-                                        .Where(g => g.Count() == 2)
-                                        .Select(g => g.Key);
+            var query = EntitySet.Where(e => e.SchedulingDate == date && e.Status != StatusEnum.Cancelado)
+                                .GroupBy(e => e.SchedulingTime)
+                                .Where(g => g.Count() == 2)
+                                .Select(g => g.Key);
 
             return query.ToListAsync();
         }
