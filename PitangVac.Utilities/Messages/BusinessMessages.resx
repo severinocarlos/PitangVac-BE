@@ -123,6 +123,9 @@
   <data name="DeletedValue" xml:space="preserve">
     <value>O registro {0} foi removido.</value>
   </data>
+  <data name="InvalidDate" xml:space="preserve">
+    <value>Não é permitido agendar a data no passado</value>
+  </data>
   <data name="InvalidValue" xml:space="preserve">
     <value>O campo {0} está inválido.</value>
   </data>
