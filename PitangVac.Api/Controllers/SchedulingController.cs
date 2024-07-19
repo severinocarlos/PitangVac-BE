@@ -36,7 +36,7 @@ namespace PitangVac.Api.Controllers
             return await _schedulingBusiness.SchedulingRegister(scheduling);
         }
 
-        [HttpGet("{patientId}")]
+        [HttpGet("patient")]
         [Authorize]
         public async Task<SchedulingPaginationDTO> AllByPatientId([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
