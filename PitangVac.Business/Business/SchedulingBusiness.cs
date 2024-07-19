@@ -167,6 +167,12 @@ namespace PitangVac.Business.Business
                 throw new BusinessException(string.Format(BusinessMessages.MaximumSchedulingQuantity, "hora", scheduling.SchedulingTime));
             }
 
+            if (scheduling.SchedulingDate < DateTime.Now)
+            {
+                throw new BusinessException(BusinessMessages.InvalidDate);
+            }
+
+
             var newScheduling = new Scheduling
             {
                 PatientId = patient!.Id,
