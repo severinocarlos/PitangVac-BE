@@ -15,8 +15,6 @@ namespace PitangVac.UnitTest.InMemoryDB
 {
     public class SchedulingBusinessTest : BaseUnitTest
     {
-        // TODO: Corrigir os erros de teste quando rodamos todos juntos
-
         private ISchedulingBusiness _schedulingBusiness;
         private IPatientBusiness _patientBusiness;
 
@@ -43,71 +41,138 @@ namespace PitangVac.UnitTest.InMemoryDB
 
             _schedulingBusiness = ObterServico<ISchedulingBusiness>();
             _patientBusiness = ObterServico<IPatientBusiness>();
-
         }
 
-        [Test]
-        public void GetAllScheduling_Success()
+        [TestCase(0, 0)]
+        [TestCase(0, 10)]
+        public void GetAllScheduling_Success(int pageNumber, int pageSize)
         {
-            async Task action() => await _schedulingBusiness.GetAllSchedulingOrderedByDateAndTime();
+            async Task action() => await _schedulingBusiness.GetAllSchedulingOrderedByDateAndTime(pageNumber, pageSize);
 
             Assert.DoesNotThrowAsync(action);
         }
 
-        [Test]
-        public async Task GetAllSchedulingByPatient_Success()
+        [TestCase(-1, 10)]
+        [TestCase(0, -1)]
+        public void GetAllScheduling_Invalid_PaginationParams(int pageNumber, int pageSize)
+        {
+            async Task action() => await _schedulingBusiness.GetAllSchedulingOrderedByDateAndTime(pageNumber, pageSize);
+
+            var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
+            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
+        }
+
+        [TestCase(0, 1)]
+        public async Task GetAllSchedulingByPatientd_Success(int pageNumber, int pageSize)
         {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste",
-                Email = "Test@teste.com",
+                Name = "Paciente Teste 1",
+                Login = "PacienteTeste1",
+                Email = "PacienteTeste1@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
 
-            var result = _patientValidator.TestValidate(patient);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.Name);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.Login);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.Email);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.Password);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
+            var patientResult = _patientValidator.TestValidate(patient);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Name);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Login);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Email);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
-
-            var patientId = 1;
-            async Task action() => await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientId);
+            async Task action() => await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientCreated.Id, pageNumber, pageSize);
 
             Assert.DoesNotThrowAsync(action);
         }
 
-        [Test]
-        public async Task GetAllSchedulingByPatient_NotExist()
+        [TestCase(-1, 10)]
+        public async Task GetAllSchedulingByPatient_Invalid_PageNumberParams(int pageNumber, int pageSize)
         {
-            var patientId = 1;
-            async Task action() => await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientId);
+            var patient = new PatientRegisterModel
+            {
+                Name = "Paciente Teste 2",
+                Login = "PacienteTeste2",
+                Email = "PacienteTeste2@teste.com",
+                Password = "Test",
+                BirthDate = DateTime.Now,
+            };
 
-            var excepetion = Assert.ThrowsAsync<RegisterNotFound>(action);
-            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.ValueNotFound, patientId));
+            var patientResult = _patientValidator.TestValidate(patient);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Name);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Login);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Email);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
+
+            var patientCreated = await _patientBusiness.SavePatient(patient);
+
+            async Task action() => await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientCreated.Id, pageNumber, pageSize);
+
+            var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
+            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
         }
 
-        [TestCase("Agendado")]
-        [TestCase("Concluído")]
-        [TestCase("Cancelado")]
+        [TestCase(0, -1)]
+        public async Task GetAllSchedulingByPatient_Invalid_PageSizeParams(int pageNumber, int pageSize)
+        {
+            var patient = new PatientRegisterModel
+            {
+                Name = "Paciente Teste 11",
+                Login = "PacienteTeste11",
+                Email = "PacienteTeste11@teste.com",
+                Password = "Test",
+                BirthDate = DateTime.Now,
+            };
 
-        public async Task GetAllSchedulingByStatus_Success(string status)
+            var patientResult = _patientValidator.TestValidate(patient);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Name);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Login);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Email);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
+
+            var patientCreated = await _patientBusiness.SavePatient(patient);
+
+            async Task action() => await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientCreated.Id, pageNumber, pageSize);
+
+            var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
+            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
+        }
+
+        [TestCase("Agendado", 0, 10)]
+        [TestCase("Concluído", 0, 10)]
+        [TestCase("Cancelado", 0, 10)]
+
+        public void GetAllSchedulingByStatus_Success(string status, int pageNumber, int pageSize)
         { 
-            async Task action() => await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status);
+            async Task action() => await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status, pageNumber, pageSize);
 
             Assert.DoesNotThrowAsync(action);
         }
 
+        [TestCase("Agendado", -1, -1)]
+        [TestCase("Concluído", 0, -1)]
+        [TestCase("Cancelado", -1, 10)]
+
+        public void GetAllSchedulingByStatus_Invalid_PaginationParams(string status, int pageNumber, int pageSize)
+        {
+            async Task action() => await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status, pageNumber, pageSize);
+
+            var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
+            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
+        }
+
         [Test]
-        public async Task GetAllSchedulingByStatus_Invalid()
+        public void GetAllSchedulingByStatus_Invalid()
         {
             var status = "Teste";
-            async Task action() => await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status);
+            int pageNumber = 0;
+            int pageSize = 10;
+
+            async Task action() => await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status, pageNumber, pageSize);
 
             var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
             Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.InvalidValue, status));
@@ -118,9 +183,9 @@ namespace PitangVac.UnitTest.InMemoryDB
         {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste5",
-                Email = "Test5@teste.com",
+                Name = "Paciente Teste 3",
+                Login = "PacienteTeste3",
+                Email = "PacienteTeste3@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -132,27 +197,27 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
-
-            var patientId = 1;
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
             var scheduling = new SchedulingRegisterModel
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = DateTime.Now,
                 SchedulingTime = DateTime.Now.TimeOfDay
             };
 
             var result = _schedulingValidator.TestValidate(scheduling);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.PatientId);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
 
-            await _schedulingBusiness.SchedulingRegister(scheduling);
+            var schedulingCreated = await _schedulingBusiness.SchedulingRegister(scheduling);
 
-            var schedulingId = 1;
+            var statusModel = new HandleStatusModel { 
+                ScheduleId = schedulingCreated.Id,
+                PatientId = patientCreated.Id
+            };
 
-            async Task action() => await _schedulingBusiness.SchedulingCompleted(schedulingId);
+            async Task action() => await _schedulingBusiness.SchedulingCompleted(statusModel);
 
             Assert.DoesNotThrowAsync(action);
         }
@@ -160,22 +225,11 @@ namespace PitangVac.UnitTest.InMemoryDB
         [Test]
         public async Task SchedulingCompleted_InvalidaSchedulingId()
         {
-            var schedulingId = 90;
-
-            async Task action() => await _schedulingBusiness.SchedulingCompleted(schedulingId);
-
-            var excepetion = Assert.ThrowsAsync<RegisterNotFound>(action);
-            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.ValueNotFound, schedulingId));
-        }
-
-        [Test]
-        public async Task SchedulingCompleted_InvalidaStatus_WhenItIsAlready()
-        {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste3",
-                Email = "Test3@teste.com",
+                Name = "Paciente Teste 4",
+                Login = "PacienteTeste4",
+                Email = "PacienteTeste4@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -187,24 +241,72 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
-            var patientId = 1;
+            var scheduling = new SchedulingRegisterModel
+            {
+                PatientId = patientCreated.Id,
+                SchedulingDate = DateTime.Now,
+                SchedulingTime = DateTime.Now.TimeOfDay
+            };
+
+            var result = _schedulingValidator.TestValidate(scheduling);
+            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
+            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
+
+            var schedulingCreated = await _schedulingBusiness.SchedulingRegister(scheduling);
+
+            var notExistSchedulingId = 0;
+            var statusModel = new HandleStatusModel
+            {
+                ScheduleId = notExistSchedulingId,
+                PatientId = patientCreated.Id
+            };
+
+            async Task action() => await _schedulingBusiness.SchedulingCompleted(statusModel);
+
+            var excepetion = Assert.ThrowsAsync<RegisterNotFound>(action);
+            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.ValueNotFound, notExistSchedulingId));
+        }
+
+        [Test]
+        public async Task SchedulingCompleted_InvalidaStatus_WhenItIsAlready()
+        {
+            var patient = new PatientRegisterModel
+            {
+                Name = "Paciente Teste 13",
+                Login = "PacienteTeste13",
+                Email = "PacienteTeste13@teste.com",
+                Password = "Test",
+                BirthDate = DateTime.Now,
+            };
+
+            var patientResult = _patientValidator.TestValidate(patient);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Name);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Login);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Email);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
+
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
             var scheduling = new Scheduling
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = DateTime.Now,
                 SchedulingTime = DateTime.Now.TimeOfDay,
                 Status = StatusEnum.Concluído,
                 CreateAt = DateTime.Now,
             };
 
-            var schedulingId = 1;
+            var schedulingCreated = await _schedulingRepository.Save(scheduling);
+            var statusModel = new HandleStatusModel
+            {
+                ScheduleId = schedulingCreated.Id,
+                PatientId = patientCreated.Id
+            };
 
-            await _schedulingRepository.Save(scheduling);
-
-            async Task action() => await _schedulingBusiness.SchedulingCompleted(schedulingId);
+            async Task action() => await _schedulingBusiness.SchedulingCompleted(statusModel);
 
             var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
             Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.InvalidValue, StatusEnum.Concluído));
@@ -215,9 +317,9 @@ namespace PitangVac.UnitTest.InMemoryDB
         {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste4",
-                Email = "Test4@teste.com",
+                Name = "Paciente Teste 5",
+                Login = "PacienteTeste5",
+                Email = "PacienteTeste5@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -229,24 +331,25 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
-
-            var patientId = 1;
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
             var scheduling = new Scheduling
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = DateTime.Now,
                 SchedulingTime = DateTime.Now.TimeOfDay,
                 Status = StatusEnum.Cancelado,
                 CreateAt = DateTime.Now,
             };
 
-            await _schedulingRepository.Save(scheduling);
+            var schedulingCreated = await _schedulingRepository.Save(scheduling);
+            var statusModel = new HandleStatusModel
+            {
+                ScheduleId = schedulingCreated.Id,
+                PatientId = patientCreated.Id
+            };
 
-            var schedulingId = 1;
-
-            async Task action() => await _schedulingBusiness.SchedulingCompleted(schedulingId);
+            async Task action() => await _schedulingBusiness.SchedulingCompleted(statusModel);
 
             var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
             Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.InvalidValue, StatusEnum.Cancelado));
@@ -257,9 +360,9 @@ namespace PitangVac.UnitTest.InMemoryDB
         {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste2",
-                Email = "Test2@teste.com",
+                Name = "Paciente Teste 6",
+                Login = "PacienteTeste6",
+                Email = "PacienteTeste6@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -271,27 +374,28 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
-
-            var patientId = 1;
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
             var scheduling = new SchedulingRegisterModel
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = DateTime.Now,
                 SchedulingTime = DateTime.Now.TimeOfDay
             };
 
             var result = _schedulingValidator.TestValidate(scheduling);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.PatientId);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
 
-            await _schedulingBusiness.SchedulingRegister(scheduling);
+            var schedulingCreated = await _schedulingBusiness.SchedulingRegister(scheduling);
 
-            var schedulingId = 1;
+            var statusModel = new HandleStatusModel
+            {
+                ScheduleId = schedulingCreated.Id,
+                PatientId = patientCreated.Id
+            };
 
-            async Task action() => await _schedulingBusiness.SchedulingCanceled(schedulingId);
+            async Task action() => await _schedulingBusiness.SchedulingCanceled(statusModel);
 
             Assert.DoesNotThrowAsync(action);
         }
@@ -299,22 +403,11 @@ namespace PitangVac.UnitTest.InMemoryDB
         [Test]
         public async Task SchedulingDeleted_InvalidaSchedulingId()
         {
-            var schedulingId = 1;
-
-            async Task action() => await _schedulingBusiness.SchedulingCanceled(schedulingId);
-
-            var excepetion = Assert.ThrowsAsync<RegisterNotFound>(action);
-            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.ValueNotFound, schedulingId));
-        }
-
-        [Test]
-        public async Task SchedulingCanceled_InvalidaStatus_WhenItIsAlready()
-        {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste10",
-                Email = "Test10@teste.com",
+                Name = "Paciente Teste 14",
+                Login = "PacienteTeste14",
+                Email = "PacienteTeste14@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -326,24 +419,59 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
-            var patientId = 1;
+            var notExistSchedulingId = 0;
+            var statusModel = new HandleStatusModel
+            {
+                ScheduleId = notExistSchedulingId,
+                PatientId = patientCreated.Id
+            };
+
+            async Task action() => await _schedulingBusiness.SchedulingCanceled(statusModel);
+
+            var excepetion = Assert.ThrowsAsync<RegisterNotFound>(action);
+            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.ValueNotFound, notExistSchedulingId));
+        }
+
+        [Test]
+        public async Task SchedulingCanceled_InvalidaStatus_WhenItIsAlready()
+        {
+            var patient = new PatientRegisterModel
+            {
+                Name = "Paciente Teste 7",
+                Login = "PacienteTeste7",
+                Email = "PacienteTeste7@teste.com",
+                Password = "Test",
+                BirthDate = DateTime.Now,
+            };
+
+            var patientResult = _patientValidator.TestValidate(patient);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Name);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Login);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Email);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
+
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
             var scheduling = new Scheduling
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = DateTime.Now,
                 SchedulingTime = DateTime.Now.TimeOfDay,
                 Status = StatusEnum.Concluído,
                 CreateAt = DateTime.Now,
             };
 
-            await _schedulingRepository.Save(scheduling);
+            var schedulingCreated = await _schedulingRepository.Save(scheduling);
+            var statusModel = new HandleStatusModel
+            {
+                ScheduleId = schedulingCreated.Id,
+                PatientId = patientCreated.Id
+            };
 
-            var schedulingId = 1;
-
-            async Task action() => await _schedulingBusiness.SchedulingCanceled(schedulingId);
+            async Task action() => await _schedulingBusiness.SchedulingCanceled(statusModel);
 
             var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
             Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.InvalidValue, StatusEnum.Concluído));
@@ -354,9 +482,9 @@ namespace PitangVac.UnitTest.InMemoryDB
         {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste1",
-                Email = "Test1@teste.com",
+                Name = "Paciente Teste 8",
+                Login = "PacienteTeste8",
+                Email = "PacienteTeste8@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -368,24 +496,25 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
-
-            var patientId = 1;
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
             var scheduling = new Scheduling
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = DateTime.Now,
                 SchedulingTime = DateTime.Now.TimeOfDay,
                 Status = StatusEnum.Cancelado,
                 CreateAt = DateTime.Now,
             };
 
-            await _schedulingRepository.Save(scheduling);
+            var schedulingCreated = await _schedulingRepository.Save(scheduling);
+            var statusModel = new HandleStatusModel
+            {
+                ScheduleId = schedulingCreated.Id,
+                PatientId = patientCreated.Id
+            };
 
-            var schedulingId = 1;
-
-            async Task action() => await _schedulingBusiness.SchedulingCanceled(schedulingId);
+            async Task action() => await _schedulingBusiness.SchedulingCanceled(statusModel);
 
             var excepetion = Assert.ThrowsAsync<InvalidDataException>(action);
             Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.InvalidValue, StatusEnum.Cancelado));
@@ -397,9 +526,9 @@ namespace PitangVac.UnitTest.InMemoryDB
         {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste7",
-                Email = "Test7@teste.com",
+                Name = "Paciente Teste 12",
+                Login = "PacienteTeste12",
+                Email = "PacienteTeste12@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -411,19 +540,16 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
-
-            var patientId = 1;
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
             var scheduling = new SchedulingRegisterModel
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = DateTime.Now,
                 SchedulingTime = DateTime.Now.TimeOfDay
             };
 
             var result = _schedulingValidator.TestValidate(scheduling);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.PatientId);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
 
@@ -433,37 +559,13 @@ namespace PitangVac.UnitTest.InMemoryDB
         }
 
         [Test]
-        public async Task SchedulingRegister_Invalid_PatientNotExist()
-        {
-            var patientId = 1;
-
-            var scheduling = new SchedulingRegisterModel
-            {
-                PatientId = patientId,
-                SchedulingDate = DateTime.Now,
-                SchedulingTime = DateTime.Now.TimeOfDay
-            };
-
-            var result = _schedulingValidator.TestValidate(scheduling);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.PatientId);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
-
-            async Task action() => await _schedulingBusiness.SchedulingRegister(scheduling);
-
-            var excepetion = Assert.ThrowsAsync<RegisterNotFound>(action);
-            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.ValueNotFound, patientId));
-        }
-
-
-        [Test]
         public async Task SchedulingRegister_Invalid_MaximumSchedulingAmountPerDay()
         {
             var patient = new PatientRegisterModel
             {
-                Name = "Teste",
-                Login = "Teste6",
-                Email = "Test6@teste.com",
+                Name = "Paciente Teste 9",
+                Login = "PacienteTeste9",
+                Email = "PacienteTeste9@teste.com",
                 Password = "Test",
                 BirthDate = DateTime.Now,
             };
@@ -475,20 +577,19 @@ namespace PitangVac.UnitTest.InMemoryDB
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
             patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
 
-            await _patientBusiness.SavePatient(patient);
+            var patientCreated = await _patientBusiness.SavePatient(patient);
 
-            var patientId = 1;
             var time = DateTime.Now.TimeOfDay;
             var date = DateTime.Now;
 
-            List<Scheduling> schedulings = new List<Scheduling>();
+            List<Scheduling> schedulings = new();
             var maximumSchedulingAmountPerDay = 20;
 
             for (int i = 0; i < maximumSchedulingAmountPerDay; i++)
             {
                 var scheduling = new Scheduling
                 {
-                    PatientId = patientId,
+                    PatientId = patientCreated.Id,
                     SchedulingDate = date,
                     SchedulingTime = time.Add(TimeSpan.FromMinutes((i / 2) * 15)),
                     Status = StatusEnum.Agendado,
@@ -502,22 +603,120 @@ namespace PitangVac.UnitTest.InMemoryDB
 
             var conflictScheduling = new SchedulingRegisterModel
             {
-                PatientId = patientId,
+                PatientId = patientCreated.Id,
                 SchedulingDate = date,
                 SchedulingTime = time
             };
 
             var result = _schedulingValidator.TestValidate(conflictScheduling);
-            result.ShouldNotHaveValidationErrorFor(patient => patient.PatientId);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
             result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
-
-            var schedluingCreated = _schedulingBusiness.GetAllSchedulingOrderedByDateAndTime();
 
             async Task action() => await _schedulingBusiness.SchedulingRegister(conflictScheduling);
 
             var excepetion = Assert.ThrowsAsync<BusinessException>(action);
             Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.MaximumSchedulingQuantity, "dia", date));
+        }
+
+        [Test]
+        public async Task SchedulingRegister_Invalid_MaximumSchedulingAmountPerTime()
+        {
+            var time = DateTime.Now.TimeOfDay;
+            var date = DateTime.Now;
+
+            List<Scheduling> schedulings = new();
+            var maximumSchedulingAmountPerTime = 2;
+
+            var patient = new PatientRegisterModel
+            {
+                Name = "Paciente Teste 15",
+                Login = "PacienteTeste15",
+                Email = "PacienteTeste15@teste.com",
+                Password = "Test",
+                BirthDate = DateTime.Now,
+            };
+
+            var patientResult = _patientValidator.TestValidate(patient);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Name);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Login);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Email);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
+
+            var patientCreated = await _patientBusiness.SavePatient(patient);
+
+            for (int i = 0; i < maximumSchedulingAmountPerTime; i++)
+            {
+                var scheduling = new Scheduling
+                {
+                    PatientId = patientCreated.Id,
+                    SchedulingDate = date,
+                    SchedulingTime = time,
+                    Status = StatusEnum.Agendado,
+                    CreateAt = DateTime.Now,
+                };
+
+                schedulings.Add(scheduling);
+            }
+
+            await _schedulingRepository.SaveAll(schedulings);
+
+            var conflictScheduling = new SchedulingRegisterModel
+            {
+                PatientId = patientCreated.Id,
+                SchedulingDate = date,
+                SchedulingTime = time
+            };
+
+            var result = _schedulingValidator.TestValidate(conflictScheduling);
+            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
+            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
+
+            async Task action() => await _schedulingBusiness.SchedulingRegister(conflictScheduling);
+
+            var excepetion = Assert.ThrowsAsync<BusinessException>(action);
+            Assert.IsTrue(excepetion.Message == string.Format(BusinessMessages.MaximumSchedulingQuantity, "hora", time));
+        }
+
+        [Test]
+        public async Task SchedulingRegister_Invalid_Date()
+        {
+            var patient = new PatientRegisterModel
+            {
+                Name = "Paciente Teste 10",
+                Login = "PacienteTeste10",
+                Email = "PacienteTeste10@teste.com",
+                Password = "Test",
+                BirthDate = DateTime.Now,
+            };
+
+            var patientResult = _patientValidator.TestValidate(patient);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Name);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Login);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Email);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.Password);
+            patientResult.ShouldNotHaveValidationErrorFor(patient => patient.BirthDate);
+
+            var patientCreated = await _patientBusiness.SavePatient(patient);
+
+            var time = DateTime.Now.TimeOfDay;
+            var date = DateTime.Now.AddDays(-1).Date;
+
+            var conflictScheduling = new SchedulingRegisterModel
+            {   
+                PatientId = patientCreated.Id,
+                SchedulingDate = date,
+                SchedulingTime = time
+            };
+
+            var result = _schedulingValidator.TestValidate(conflictScheduling);
+            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingDate);
+            result.ShouldNotHaveValidationErrorFor(patient => patient.SchedulingTime);
+
+            async Task action() => await _schedulingBusiness.SchedulingRegister(conflictScheduling);
+
+            var excepetion = Assert.ThrowsAsync<BusinessException>(action);
+            Assert.IsTrue(excepetion.Message == BusinessMessages.InvalidDate);
         }
 
 
