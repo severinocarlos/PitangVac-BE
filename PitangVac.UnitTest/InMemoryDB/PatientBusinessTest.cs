@@ -130,7 +130,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void InsertPatient_InvalidName(string name)
+        public void InsertPatient_InvalidName(string? name)
         {
             var patient = new PatientRegisterModel
             {
@@ -148,7 +148,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void InsertPatient_InvalidLogin_WithNullOrEmptyValue(string login)
+        public void InsertPatient_InvalidLogin_WithNullOrEmptyValue(string? login)
         {
             var patient = new PatientRegisterModel
             {
@@ -200,7 +200,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void InsertPatient_InvalidEmail_NullOrEmpty(string email)
+        public void InsertPatient_InvalidEmail_NullOrEmpty(string? email)
         {
             var patient = new PatientRegisterModel
             {
@@ -218,7 +218,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void InsertPatient_InvalidPassword_NullOrEmpty(string password)
+        public void InsertPatient_InvalidPassword_NullOrEmpty(string? password)
         {
             var patient = new PatientRegisterModel
             {
@@ -261,7 +261,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void ChecksExistence_PatientByEmail_Invalid(string email)
+        public void ChecksExistence_PatientByEmail_Invalid(string? email)
         {
             async Task action() => await _business.ExistPatientByEmail(email);
 
@@ -279,7 +279,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void ChecksExistence_PatientByLogin_Invalid(string login)
+        public void ChecksExistence_PatientByLogin_Invalid(string? login)
         {
             async Task action() => await _business.ExistPatientByEmail(login);
 
@@ -297,7 +297,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void FindPatientByName_Invalid(string name)
+        public void FindPatientByName_Invalid(string? name)
         {
             async Task action() => await _business.FindPatientByName(name);
 
@@ -315,7 +315,7 @@ namespace PitangVac.UnitTest.InMemoryDB
 
         [TestCase("")]
         [TestCase(null)]
-        public void FindPatientByLogin_Invalid(string login)
+        public void FindPatientByLogin_Invalid(string? login)
         {
             async Task action() => await _business.FindPatientByName(login);
 
