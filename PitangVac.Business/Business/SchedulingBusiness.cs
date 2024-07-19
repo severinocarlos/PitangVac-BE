@@ -81,6 +81,9 @@ namespace PitangVac.Business.Business
 
         public async Task<SchedulingDTO> SchedulingCanceled(int schedulingId)
         {
+            var login = _userContext.Login();
+            var patient = await _patientRepository.FindByLogin(login);
+
             var scheduling = await _schedulingRepository.GetById(schedulingId) ?? throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, schedulingId));
 
             if (scheduling.Status != StatusEnum.Agendado)
@@ -99,18 +102,21 @@ namespace PitangVac.Business.Business
                 CreateAt = scheduling.CreateAt,
                 Patient = new PatientDTO
                 {
-                    Id = scheduling.Patient.Id,
-                    Name = scheduling.Patient.Name,
-                    Login = scheduling.Patient.Login,
-                    Email = scheduling.Patient.Email,
-                    BirthDate = scheduling.Patient.BirthDate,
-                    CreateAt = scheduling.Patient.CreateAt,
+                    Id = patient!.Id,
+                    Name = patient.Name,
+                    Login = patient.Login,
+                    Email = patient.Email,
+                    BirthDate = patient.BirthDate,
+                    CreateAt = patient.CreateAt,
                 },
             };
         }
 
         public async Task<SchedulingDTO> SchedulingCompleted(int schedulingId)
         {
+            var login = _userContext.Login();
+            var patient = await _patientRepository.FindByLogin(login);
+
             var scheduling = await _schedulingRepository.GetById(schedulingId) ?? throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, schedulingId));
 
             if (scheduling.Status != StatusEnum.Agendado)
@@ -129,12 +135,12 @@ namespace PitangVac.Business.Business
                 CreateAt = scheduling.CreateAt,
                 Patient = new PatientDTO
                 {
-                    Id = scheduling.Patient.Id,
-                    Name = scheduling.Patient.Name,
-                    Login = scheduling.Patient.Login,
-                    Email = scheduling.Patient.Email,
-                    BirthDate = scheduling.Patient.BirthDate,
-                    CreateAt = scheduling.Patient.CreateAt,
+                    Id = patient!.Id,
+                    Name = patient.Name,
+                    Login = patient.Login,
+                    Email = patient.Email,
+                    BirthDate = patient.BirthDate,
+                    CreateAt = patient.CreateAt,
                 },
             };
         }
