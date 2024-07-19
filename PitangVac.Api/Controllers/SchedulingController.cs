@@ -23,9 +23,9 @@ namespace PitangVac.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<List<SchedulingDTO>> All()
+        public async Task<SchedulingPaginationDTO> All([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            return await _schedulingBusiness.GetAllSchedulingOrderedByDateAndTime();
+            return await _schedulingBusiness.GetAllSchedulingOrderedByDateAndTime(pageNumber, pageSize);
         }
 
         [HttpPost]
@@ -38,22 +38,22 @@ namespace PitangVac.Api.Controllers
 
         [HttpGet("{patientId}")]
         [Authorize]
-        public async Task<List<SchedulingDTO>> AllByPatientId(int patientId)
+        public async Task<SchedulingPaginationDTO> AllByPatientId([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            return await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientId);
+            return await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(pageNumber, pageSize);
         }
 
         [HttpGet("status/{status}")]
         [Authorize]
-        public async Task<List<SchedulingDTO>> AllByStatus(string status)
+        public async Task<SchedulingPaginationDTO> AllByStatus(string status, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            return await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status);
+            return await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status, pageNumber, pageSize);
         }
 
         [HttpPost("status/complete")]
         [Transactional]
         [Authorize]
-        public async Task<List<SchedulingDTO>> CompleteScheduling(HandleStatusModel schedule)
+        public async Task<SchedulingDTO> CompleteScheduling(HandleStatusModel schedule)
         {
             return await _schedulingBusiness.SchedulingCompleted(schedule.ScheduleId);
         }
@@ -61,7 +61,7 @@ namespace PitangVac.Api.Controllers
         [HttpPost("status/cancel")]
         [Transactional]
         [Authorize]
-        public async Task<List<SchedulingDTO>> CancelScheduling(HandleStatusModel schedule)
+        public async Task<SchedulingDTO> CancelScheduling(HandleStatusModel schedule)
         {
             return await _schedulingBusiness.SchedulingCanceled(schedule.ScheduleId);
         }

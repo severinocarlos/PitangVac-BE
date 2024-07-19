@@ -5,9 +5,9 @@ namespace PitangVac.Repository.Interface.IRepositories
 {
     public interface ISchedulingRepository : IBaseRepository<Scheduling>
     {
-        Task<List<SchedulingDTO>> GetAllOrderedByDateAndTime();
-        Task<List<SchedulingDTO>> GetByPatientIdOrderedByDateAndTime(int patientId);
-        Task<List<SchedulingDTO>> GetByStatusOrderedByDateAndTime(string status);
+        Task<SchedulingPaginationDTO> GetAllOrderedByDateAndTime(int pageNumber, int pageSize);
+        Task<SchedulingPaginationDTO> GetByPatientIdOrderedByDateAndTime(int patientId, int pageNumber, int pageSize);
+        Task<SchedulingPaginationDTO> GetByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize);
         Task<int> CheckSchedulingAvaliableByDate(DateTime date);
         Task<int> CheckSchedulingAvaliableByTime(DateTime date, TimeSpan hour);
         Task<List<TimeSpan>> FilledSchedules(DateTime date);
