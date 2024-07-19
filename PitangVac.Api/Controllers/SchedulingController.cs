@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PitangVac.Business.Interface.IBusiness;
 using PitangVac.Entity.DTO;
@@ -36,11 +35,11 @@ namespace PitangVac.Api.Controllers
             return await _schedulingBusiness.SchedulingRegister(scheduling);
         }
 
-        [HttpGet("patient")]
+        [HttpGet("{patientId}")]
         [Authorize]
-        public async Task<SchedulingPaginationDTO> AllByPatientId([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<SchedulingPaginationDTO> AllByPatientId(int patientId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            return await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(pageNumber, pageSize);
+            return await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientId, pageNumber, pageSize);
         }
 
         [HttpGet("status/{status}")]
@@ -55,7 +54,7 @@ namespace PitangVac.Api.Controllers
         [Authorize]
         public async Task<SchedulingDTO> CompleteScheduling(HandleStatusModel schedule)
         {
-            return await _schedulingBusiness.SchedulingCompleted(schedule.ScheduleId);
+            return await _schedulingBusiness.SchedulingCompleted(schedule);
         }
 
         [HttpPost("status/cancel")]
@@ -63,7 +62,7 @@ namespace PitangVac.Api.Controllers
         [Authorize]
         public async Task<SchedulingDTO> CancelScheduling(HandleStatusModel schedule)
         {
-            return await _schedulingBusiness.SchedulingCanceled(schedule.ScheduleId);
+            return await _schedulingBusiness.SchedulingCanceled(schedule);
         }
 
         [HttpGet("hours-avaliable/{date}")]

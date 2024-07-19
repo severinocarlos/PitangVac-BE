@@ -7,10 +7,10 @@ namespace PitangVac.Business.Interface.IBusiness
     {
         Task<SchedulingDTO> SchedulingRegister(SchedulingRegisterModel scheduling);
         Task<List<string>> HoursAvailable(DateTime date);
-        Task<SchedulingDTO> SchedulingCompleted(int schedulingId);
-        Task<SchedulingDTO> SchedulingCanceled(int schedulingId);
+        Task<SchedulingDTO> SchedulingCompleted(HandleStatusModel statusModel);
+        Task<SchedulingDTO> SchedulingCanceled(HandleStatusModel statusModel);
         Task<SchedulingPaginationDTO> GetAllSchedulingOrderedByDateAndTime(int pageNumber, int pageSize);
-        Task<SchedulingPaginationDTO> GetSchedulingsByPatientIdOrderedByDateAndTime(int pageNumber, int pageSize);
+        Task<SchedulingPaginationDTO> GetSchedulingsByPatientIdOrderedByDateAndTime(int patientId, int pageNumber, int pageSize);
         Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize);
     }
 }

@@ -1,4 +1,5 @@
-﻿using PitangVac.Business.Interface.IBusiness;
+﻿using Microsoft.AspNetCore.Http;
+using PitangVac.Business.Interface.IBusiness;
 using PitangVac.Entity.DTO;
 using PitangVac.Entity.Entities;
 using PitangVac.Entity.Enums;
@@ -30,35 +31,43 @@ namespace PitangVac.Business.Business
 
         private readonly ISchedulingRepository _schedulingRepository;
         private readonly IPatientRepository _patientRepository;
-        private readonly IUserContext _userContext;
 
         public SchedulingBusiness(ISchedulingRepository schedulingRepository, 
-                                  IPatientRepository patientRepository,
-                                  IUserContext userContext) 
+                                  IPatientRepository patientRepository) 
         {
             _schedulingRepository = schedulingRepository;
             _patientRepository = patientRepository;
-            _userContext = userContext;
         }
 
         public async Task<SchedulingPaginationDTO> GetAllSchedulingOrderedByDateAndTime(int pageNumber, int pageSize)
         {
+            if (pageNumber < 0 || pageSize < 0)
+            {
+                throw new InvalidDataException(string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
+            }
+
             return await _schedulingRepository.GetAllOrderedByDateAndTime(pageNumber, pageSize);
         }
 
-        public async Task<SchedulingPaginationDTO> GetSchedulingsByPatientIdOrderedByDateAndTime(int pageNumber, int pageSize)
+        public async Task<SchedulingPaginationDTO> GetSchedulingsByPatientIdOrderedByDateAndTime(int patientId, int pageNumber, int pageSize)
         {
-            var login = _userContext.Login();
-            // TODO: Refatorar para método que retorna apenas booleano verificando se existe por id
-            var patient = await _patientRepository.FindByLogin(login) ?? 
-                            throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, login));
+            if (pageNumber < 0 || pageSize < 0)
+            {
+                throw new InvalidDataException(string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
+            }
+            var patient = await _patientRepository.GetById(patientId) ?? 
+                                                throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, patientId));
 
-
-            return await _schedulingRepository.GetByPatientIdOrderedByDateAndTime(patient.Id, pageNumber, pageSize);
+            return await _schedulingRepository.GetByPatientIdOrderedByDateAndTime(patientId, pageNumber, pageSize);
         }
 
         public async Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize)
         {
+            if (pageNumber < 0 || pageSize < 0)
+            {
+                throw new InvalidDataException(string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
+            }
+
             if (!StatusValidator.IsValidStatus(status))
             {
                 throw new InvalidDataException(string.Format(BusinessMessages.InvalidValue, status));
@@ -79,12 +88,13 @@ namespace PitangVac.Business.Business
            return HoursAvailableList.Where(e => !filteredTimeStrings.Contains(e)).ToList();
         }
 
-        public async Task<SchedulingDTO> SchedulingCanceled(int schedulingId)
+        public async Task<SchedulingDTO> SchedulingCanceled(HandleStatusModel statusModel)
         {
-            var login = _userContext.Login();
-            var patient = await _patientRepository.FindByLogin(login);
+            var patient = await _patientRepository.GetById(statusModel.PatientId) ?? 
+                                        throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, statusModel.PatientId));
 
-            var scheduling = await _schedulingRepository.GetById(schedulingId) ?? throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, schedulingId));
+            var scheduling = await _schedulingRepository.GetById(statusModel.ScheduleId) ?? 
+                                        throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, statusModel.ScheduleId));
 
             if (scheduling.Status != StatusEnum.Agendado)
             {
@@ -112,12 +122,13 @@ namespace PitangVac.Business.Business
             };
         }
 
-        public async Task<SchedulingDTO> SchedulingCompleted(int schedulingId)
+        public async Task<SchedulingDTO> SchedulingCompleted(HandleStatusModel statusModel)
         {
-            var login = _userContext.Login();
-            var patient = await _patientRepository.FindByLogin(login);
+            var patient = await _patientRepository.GetById(statusModel.PatientId) ?? 
+                                                    throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, statusModel.PatientId));
 
-            var scheduling = await _schedulingRepository.GetById(schedulingId) ?? throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, schedulingId));
+            var scheduling = await _schedulingRepository.GetById(statusModel.ScheduleId) ?? 
+                                                    throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, statusModel.ScheduleId));
 
             if (scheduling.Status != StatusEnum.Agendado)
             {
@@ -147,9 +158,8 @@ namespace PitangVac.Business.Business
 
         public async Task<SchedulingDTO> SchedulingRegister(SchedulingRegisterModel scheduling)
         {
-            var login = _userContext.Login();
-
-            var patient = await _patientRepository.FindByLogin(login);
+            var patient = await _patientRepository.GetById(scheduling.PatientId) ?? 
+                                                        throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, scheduling.PatientId));
 
             var maximumSchedulingAmountPerDay = 20;
             var schedulingAmountPerDay = await _schedulingRepository.CheckSchedulingAvaliableByDate(scheduling.SchedulingDate);
@@ -167,7 +177,7 @@ namespace PitangVac.Business.Business
                 throw new BusinessException(string.Format(BusinessMessages.MaximumSchedulingQuantity, "hora", scheduling.SchedulingTime));
             }
 
-            if (scheduling.SchedulingDate < DateTime.Now)
+            if (scheduling.SchedulingDate.Date < DateTime.Now.Date)
             {
                 throw new BusinessException(BusinessMessages.InvalidDate);
             }

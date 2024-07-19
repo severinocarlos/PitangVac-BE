@@ -9,6 +9,9 @@ namespace PitangVac.Validators.Fluent
     {
         public SchedulingRegisterValidator() 
         {
+            RuleFor(t => t.PatientId)
+               .NotNull().WithMessage(string.Format(BusinessMessages.RequiredValue, "Id do paciente"))
+               .NotEmpty().WithMessage(string.Format(BusinessMessages.RequiredValue, "Id do paciente"));
 
             RuleFor(t => t.SchedulingDate)
                 .NotNull().WithMessage(string.Format(BusinessMessages.RequiredValue, "Data do agendamento"))
