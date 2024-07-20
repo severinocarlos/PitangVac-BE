@@ -42,11 +42,11 @@ namespace PitangVac.Api.Controllers
             return await _schedulingBusiness.GetSchedulingsByPatientIdOrderedByDateAndTime(patientId, pageNumber, pageSize);
         }
 
-        [HttpGet("status/{status}")]
+        [HttpGet("status/{status}/{patientId}")]
         [Authorize]
-        public async Task<SchedulingPaginationDTO> AllByStatus(string status, [FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<SchedulingPaginationDTO> AllByStatus(string status, int patientId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            return await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status, pageNumber, pageSize);
+            return await _schedulingBusiness.GetSchedulingsByStatusOrderedByDateAndTime(status, patientId, pageNumber, pageSize);
         }
 
         [HttpPost("status/complete")]

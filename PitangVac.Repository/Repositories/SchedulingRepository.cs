@@ -99,13 +99,13 @@ namespace PitangVac.Repository.Repositories
             };
         }
 
-        public async Task<SchedulingPaginationDTO> GetByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize)
+        public async Task<SchedulingPaginationDTO> GetByStatusOrderedByDateAndTime(string status, int patientId, int pageNumber, int pageSize)
         {
 
-            var totalCount = await EntitySet.CountAsync(e => e.Status.Equals(status));
+            var totalCount = await EntitySet.CountAsync(e => e.Status.Equals(status) && e.PatientId.Equals(patientId));
 
             var schedulings = await EntitySet.Include(e => e.Patient)
-                                 .Where(scheduling => scheduling.Status == status)
+                                 .Where(scheduling => scheduling.Status == status && scheduling.PatientId.Equals(patientId))
                                  .Select(scheduling => new SchedulingDTO
                                  {
                                       Id = scheduling.Id,

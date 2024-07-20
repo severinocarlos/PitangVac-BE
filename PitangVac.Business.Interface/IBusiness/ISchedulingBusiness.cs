@@ -11,6 +11,6 @@ namespace PitangVac.Business.Interface.IBusiness
         Task<SchedulingDTO> SchedulingCanceled(HandleStatusModel statusModel);
         Task<SchedulingPaginationDTO> GetAllSchedulingOrderedByDateAndTime(int pageNumber, int pageSize);
         Task<SchedulingPaginationDTO> GetSchedulingsByPatientIdOrderedByDateAndTime(int patientId, int pageNumber, int pageSize);
-        Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize);
+        Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int patientId, int pageNumber, int pageSize);
     }
 }

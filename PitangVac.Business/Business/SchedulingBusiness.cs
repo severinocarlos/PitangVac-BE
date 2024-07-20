@@ -61,7 +61,7 @@ namespace PitangVac.Business.Business
             return await _schedulingRepository.GetByPatientIdOrderedByDateAndTime(patientId, pageNumber, pageSize);
         }
 
-        public async Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int pageNumber, int pageSize)
+        public async Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int patientId, int pageNumber, int pageSize)
         {
             if (pageNumber < 0 || pageSize < 0)
             {
@@ -73,7 +73,7 @@ namespace PitangVac.Business.Business
                 throw new InvalidDataException(string.Format(BusinessMessages.InvalidValue, status));
             }
 
-            return await _schedulingRepository.GetByStatusOrderedByDateAndTime(status, pageNumber, pageSize);
+            return await _schedulingRepository.GetByStatusOrderedByDateAndTime(status, patientId, pageNumber, pageSize);
         }
 
         public async Task<List<string>> HoursAvailable(DateTime date)
