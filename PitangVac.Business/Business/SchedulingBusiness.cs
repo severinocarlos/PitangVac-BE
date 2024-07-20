@@ -63,6 +63,9 @@ namespace PitangVac.Business.Business
 
         public async Task<SchedulingPaginationDTO> GetSchedulingsByStatusOrderedByDateAndTime(string status, int patientId, int pageNumber, int pageSize)
         {
+            var _ = await _patientRepository.GetById(patientId) ??
+                                        throw new RegisterNotFound(string.Format(BusinessMessages.ValueNotFound, patientId));
+
             if (pageNumber < 0 || pageSize < 0)
             {
                 throw new InvalidDataException(string.Format(BusinessMessages.MinLength, pageNumber < 0 ? "pageNumber" : "pageSize", 0));
